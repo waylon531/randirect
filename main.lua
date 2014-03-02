@@ -1,8 +1,8 @@
 function love.load()
 	level="game"
-	tile = love.graphics.newImage("img/tile.png")
+	tile = love.graphics.newImage("img/conveyor.png")
 	block = love.graphics.newImage("img/block.png")
-	character = love.graphics.newImage("img/character.png")
+	character = love.graphics.newImage("img/character2.png")
 	arrow = love.graphics.newImage("img/arrow.png")
 	fire = love.graphics.newImage("img/fire.png")
 	rng = love.math.newRandomGenerator()
@@ -11,8 +11,8 @@ function love.load()
 	arrowY = arrow:getHeight()/2
 	love.graphics.setBackgroundColor( 0, 0, 0 )
 	windowWidth=love.graphics.getWidth()/2
-	spriteY=16
-	spriteX=16
+	spriteY=32
+	spriteX=32
 	windowHeight=love.graphics.getHeight()
 	numberOfTiles=math.ceil(windowHeight/spriteY)+1
 	spriteBatch = love.graphics.newSpriteBatch( tile, 100 )
@@ -24,12 +24,12 @@ function love.load()
 end
 function love.draw()
 	if level=="game" then
-		love.graphics.draw(arrow,windowWidth+30,characterY+8,math.pi*direction/2,2,2,arrowX,arrowY)
+		love.graphics.draw(arrow,windowWidth+30,characterY+16,math.pi*direction/2,2,2,arrowX,arrowY)
 		--love.graphics.print(direction)
 		love.graphics.print(time3,20,100)
 		--love.graphics.print(i,20,200)
 		love.graphics.draw(spriteBatch)
-		love.graphics.draw(character,windowWidth-7,characterY)
+		love.graphics.draw(character,windowWidth-16,characterY)
 	else
 		love.graphics.print("GAME OVER",windowWidth,windowHeight/2)
 	end
@@ -54,10 +54,10 @@ end
 function love.update(dt)
 	time2 = love.timer.getTime() - time
 	time3 = love.timer.getTime() - time4
-		if time2 >= .2 then
+		if time2 >= .2-1/characterY then
 			updateSpritebatch(spriteBatch,i)
 			characterY=characterY+1
-			if i>1 then
+			if i>7 then
 				i=0
 			end
 			i=i+1	
@@ -71,7 +71,7 @@ function updateSpritebatch(spriteBatch,translation)
 	spriteBatch:bind()
 	spriteBatch:clear()
 	for x=0,numberOfTiles do
-		spriteBatch:add(windowWidth-8,16*x-16+translation)
+		spriteBatch:add(windowWidth-16,32*x-32+translation)
 	end
 	spriteBatch:unbind()
 end
