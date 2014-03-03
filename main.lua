@@ -30,6 +30,7 @@ function love.draw()
 		--love.graphics.print(i,20,200)
 		love.graphics.draw(spriteBatch)
 		love.graphics.draw(character,windowWidth-16,characterY)
+		love.graphics.print(.2-1/(characterY-20)-.1/(1+math.exp(-time3+50)))
 	else
 		love.graphics.print("GAME OVER",windowWidth,windowHeight/2)
 	end
@@ -54,7 +55,7 @@ end
 function love.update(dt)
 	time2 = love.timer.getTime() - time
 	time3 = love.timer.getTime() - time4
-		if time2 >= .2-1/characterY then
+		if time2 >= .2-1/(characterY-20)-.1/(1+math.exp(-time3+50)) then
 			updateSpritebatch(spriteBatch,i)
 			characterY=characterY+1
 			if i>7 then
