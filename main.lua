@@ -1,4 +1,6 @@
+core=require "core"
 function love.load()
+	love.window.setTitle("randir")
 	level="menu"
 	tile = love.graphics.newImage("img/conveyor.png")
 	character = love.graphics.newImage("img/character2.png")
@@ -41,24 +43,32 @@ function love.draw()
 		--love.graphics.print(i,20,200)
 		love.graphics.draw(spriteBatch)
 		love.graphics.draw(character,windowWidth-16,characterY)
-		--love.graphics.print(.2-1/(characterY-20)-.05/(1+math.exp(-time3+50)))
+		--love.graphics.print(difficulty-1/(characterY-20)-.05/(1+math.exp(-time3+50)))
 	elseif level=="end" then
 		love.graphics.print("GAME OVER",windowWidth-60,windowHeight/2-200)
-		love.graphics.print(score,windowWidth-font:getWidth(score)/2-20,windowHeight/2-100)
+		love.graphics.print(score,windowWidth-font:getWidth(score)/2-20,windowHeight/2-170)
+		for i, v in ipairs(csv) do 
+			if (i % 2 == 0) then
+				x=windowWidth+30
+			else
+				x=windowWidth-90
+			end
+			love.graphics.print(v,x,math.ceil(i/2)*20+150)
+		end
 		love.graphics.setColor( 255, 200, 255)
 		love.graphics.rectangle("fill", windowWidth-70, windowHeight/2-20, 100, 40 )
 		love.graphics.rectangle("fill", windowWidth-70, windowHeight/2+60, 100, 40 )
 		love.graphics.setColor( 0, 0, 0)
-		love.graphics.print("Start",windowWidth-35,windowHeight/2-7)
-		love.graphics.print("Difficult Start",windowWidth-60,windowHeight/2+73)
+		love.graphics.print("Normal Mode",windowWidth-60,windowHeight/2-7)
+		love.graphics.print("INSANE MODE!!!",windowWidth-70,windowHeight/2+73)
 		love.graphics.setColor( 255, 255, 255)
 	elseif level=="menu" then
 		love.graphics.setColor( 255, 200, 255)
 		love.graphics.rectangle("fill", windowWidth-70, windowHeight/2-20, 100, 40 )
 		love.graphics.rectangle("fill", windowWidth-70, windowHeight/2+60, 100, 40 )
 		love.graphics.setColor( 0, 0, 0)
-		love.graphics.print("Start",windowWidth-35,windowHeight/2-7)
-		love.graphics.print("Difficult Start",windowWidth-60,windowHeight/2+73)
+		love.graphics.print("Normal Mode",windowWidth-60,windowHeight/2-7)
+		love.graphics.print("INSANE MODE!!!",windowWidth-70,windowHeight/2+73)
 		love.graphics.setColor( 255, 255, 255)
 	end
 end
@@ -104,6 +114,12 @@ function love.update(dt)
 		score=time3
 		level="end"
 		characterY=windowHeight
+		if difficulty==.2 then
+			contents= love.filesystem.read("highscores.csv")
+		else
+			contents= love.filesystem.read("highscoresdifficult.csv")
+		end
+		csv = core.ParseCSVLine(contents)
 	end
 end
 function love.mousepressed(x, y, button)
