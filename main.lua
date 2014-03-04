@@ -1,12 +1,10 @@
 function love.load()
-	level="game"
+	level="menu"
 	tile = love.graphics.newImage("img/conveyor.png")
-	block = love.graphics.newImage("img/block.png")
 	character = love.graphics.newImage("img/character2.png")
 	arrow = love.graphics.newImage("img/arrow.png")
 	bigArrow = love.graphics.newImage("img/bigarrow.png")
 	bigGreenArrow = love.graphics.newImage("img/biggreenarrow.png")
-	fire = love.graphics.newImage("img/fire.png")
 	rng = love.math.newRandomGenerator()
 	direction = rng:random(4) --1 is down, 2 is left, 3 is up, 4 is right
 	bigDirection = rng:random(4)
@@ -24,9 +22,11 @@ function love.load()
 	spriteBatch = love.graphics.newSpriteBatch( tile, 100 )
 	updateSpritebatch(spriteBatch,0)
 	time = love.timer.getTime()
-	i=0
 	characterY=windowHeight/2
+	i=0
 	time4 = love.timer.getTime()
+	difficulty=.2
+	font = love.graphics.newFont(12)
 end
 function love.draw()
 	if level=="game" then
@@ -42,8 +42,24 @@ function love.draw()
 		love.graphics.draw(spriteBatch)
 		love.graphics.draw(character,windowWidth-16,characterY)
 		--love.graphics.print(.2-1/(characterY-20)-.05/(1+math.exp(-time3+50)))
-	else
-		love.graphics.print("GAME OVER",windowWidth,windowHeight/2)
+	elseif level=="end" then
+		love.graphics.print("GAME OVER",windowWidth-60,windowHeight/2-200)
+		love.graphics.print(score,windowWidth-font:getWidth(score)/2-20,windowHeight/2-100)
+		love.graphics.setColor( 255, 200, 255)
+		love.graphics.rectangle("fill", windowWidth-70, windowHeight/2-20, 100, 40 )
+		love.graphics.rectangle("fill", windowWidth-70, windowHeight/2+60, 100, 40 )
+		love.graphics.setColor( 0, 0, 0)
+		love.graphics.print("Start",windowWidth-35,windowHeight/2-7)
+		love.graphics.print("Difficult Start",windowWidth-60,windowHeight/2+73)
+		love.graphics.setColor( 255, 255, 255)
+	elseif level=="menu" then
+		love.graphics.setColor( 255, 200, 255)
+		love.graphics.rectangle("fill", windowWidth-70, windowHeight/2-20, 100, 40 )
+		love.graphics.rectangle("fill", windowWidth-70, windowHeight/2+60, 100, 40 )
+		love.graphics.setColor( 0, 0, 0)
+		love.graphics.print("Start",windowWidth-35,windowHeight/2-7)
+		love.graphics.print("Difficult Start",windowWidth-60,windowHeight/2+73)
+		love.graphics.setColor( 255, 255, 255)
 	end
 end
 function love.keypressed( key, isrepeat )
@@ -71,9 +87,10 @@ function love.keypressed( key, isrepeat )
 	end
 end
 function love.update(dt)
-	time2 = love.timer.getTime() - time
-	time3 = love.timer.getTime() - time4
-		if time2 >= .2-1/(characterY-20)-.05/(1+math.exp(-time3+50)) then
+	if level=="game" then
+		time2 = love.timer.getTime() - time
+		time3 = love.timer.getTime() - time4
+		if time2 >= difficulty-1/(characterY-20)-.05/(1+math.exp(-time3+50)) then
 			updateSpritebatch(spriteBatch,i)
 			characterY=characterY+1
 			if i>7 then
@@ -82,8 +99,32 @@ function love.update(dt)
 			i=i+1	
 			time = love.timer.getTime( )
 		end
+	end
 	if characterY>windowHeight then
+		score=time3
 		level="end"
+		characterY=windowHeight
+	end
+end
+function love.mousepressed(x, y, button)
+	if button == "l" then
+		if level ~= "game" and y>windowHeight/2-20 and y<windowHeight/2+20 then
+			if x>windowWidth-70 and x<windowWidth+30 then
+				level="game"
+				characterY=windowHeight/2
+				time = love.timer.getTime()
+				time4 = love.timer.getTime()
+				difficulty=.2
+			end
+		elseif level ~= "game" and y>windowHeight/2+60 and y<windowHeight/2+100 then
+			if x>windowWidth-70 and x<windowWidth+30 then
+				level="game"
+				characterY=windowHeight/2
+				time = love.timer.getTime()
+				time4 = love.timer.getTime()
+				difficulty=.1
+			end
+		end
 	end
 end
 function updateSpritebatch(spriteBatch,translation)
