@@ -41,14 +41,18 @@ end
 function core.toCSV (tt)
   local s = ""
   for _,p in pairs(tt) do
-    s = s .. "," .. escapeCSV(p)
+    s = s .. "," .. core.escapeCSV(p)
   end
   return string.sub(s, 2)      -- remove first comma
 end
-function escapeCSV (s)
+function core.escapeCSV (s)
   if string.find(s, '[,"]') then
     s = '"' .. string.gsub(s, '"', '""') .. '"'
   end
   return s
+end
+function core.round(num, idp)
+  local mult = 10^(idp or 0)
+  return math.floor(num * mult + 0.5) / mult
 end
 return core

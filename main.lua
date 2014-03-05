@@ -29,6 +29,8 @@ function love.load()
 	time4 = love.timer.getTime()
 	difficulty=.2
 	font = love.graphics.newFont(12)
+	highscore=false
+	player="waylon531"
 end
 function love.draw()
 	if level=="game" then
@@ -46,7 +48,7 @@ function love.draw()
 		--love.graphics.print(difficulty-1/(characterY-20)-.05/(1+math.exp(-time3+50)))
 	elseif level=="end" then
 		love.graphics.print("GAME OVER",windowWidth-60,windowHeight/2-200)
-		love.graphics.print(score,windowWidth-font:getWidth(score)/2-20,windowHeight/2-170)
+		love.graphics.print(oldscore,windowWidth-font:getWidth(oldscore)/2-20,windowHeight/2-170)
 		for i, v in ipairs(csv) do 
 			if (i % 2 == 0) then
 				x=windowWidth+30
@@ -55,6 +57,7 @@ function love.draw()
 			end
 			love.graphics.print(v,x,math.ceil(i/2)*20+150)
 		end
+		highscore=false
 		love.graphics.setColor( 255, 200, 255)
 		love.graphics.rectangle("fill", windowWidth-70, windowHeight/2-20, 100, 40 )
 		love.graphics.rectangle("fill", windowWidth-70, windowHeight/2+60, 100, 40 )
@@ -111,7 +114,7 @@ function love.update(dt)
 		end
 	end
 	if characterY>windowHeight then
-		score=time3
+		score,oldscore=time3,time3
 		level="end"
 		characterY=windowHeight
 		if difficulty==.2 then
@@ -120,6 +123,24 @@ function love.update(dt)
 			contents= love.filesystem.read("highscoresdifficult.csv")
 		end
 		csv = core.ParseCSVLine(contents)
+		for i, v in ipairs(csv) do 
+			if (i % 2 == 0) then
+			else
+				if tonumber(score) > tonumber(v) then
+					table.insert(csv,i,core.round(score,6))
+					table.insert(csv,i+1,"notwaylon")
+					table.remove(csv)
+					table.remove(csv)
+					score=v
+				end
+			end
+		end
+		if difficulty==.2 then
+			love.filesystem.write("highscores.csv",core.toCSV(csv))
+		else
+			love.filesystem.write("highscoresdifficult.csv",core.toCSV(csv))
+		end
+		
 	end
 end
 function love.mousepressed(x, y, button)
@@ -142,6 +163,9 @@ function love.mousepressed(x, y, button)
 			end
 		end
 	end
+end
+function love.textinput(t)
+    --text = text .. t
 end
 function updateSpritebatch(spriteBatch,translation)
 	spriteBatch:bind()
