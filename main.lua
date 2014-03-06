@@ -1,5 +1,7 @@
 core=require "core"
 function love.load()
+	red=255
+	textEnterable=true
 	insert=0
 	text=""
 	love.window.setTitle("randir")
@@ -55,6 +57,11 @@ function love.draw()
 			if (i % 2 == 0) then
 				x=windowWidth+30
 				if v==4 then
+					if red == 255 then
+						love.graphics.setColor( 255, 0, 0)
+					else
+						love.graphics.setColor( 255, 255, 255)
+					end
 					v=text
 					if text=='' then
 						love.graphics.setColor( 255, 0, 0)
@@ -90,6 +97,15 @@ function love.keypressed( key, isrepeat )
 	if level=="end" then
 		if key =="backspace" then
 			text=string.sub(text, 1, string.len(text)-1)
+		end
+	end
+	if key == 'return' then
+		if textEnterable == false then
+			textEnterable=true
+			red=255
+		else
+			textEnterable=false
+			red=0
 		end
 	end
 	if whichArrow ==1 then
@@ -133,6 +149,7 @@ function love.update(dt)
 		score,oldscore=time3,time3
 		level="end"
 		text=""
+		textEnterable=true
 		print("gameover")
 		characterY=windowHeight-10000000
 		if difficulty==.2 then
@@ -220,7 +237,9 @@ function love.quit()
 	end
 end
 function love.textinput(t)
+	if textEnterable==true then
 		text = text .. t
+	end
 end
 function updateSpritebatch(spriteBatch,translation)
 	spriteBatch:bind()
