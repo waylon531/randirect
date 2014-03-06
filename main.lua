@@ -144,7 +144,13 @@ function love.update(dt)
 		for i, v in ipairs(csv) do 
 			if (i % 2 == 0) then
 			else
-				if tonumber(score) > tonumber(v) then
+				print(":")
+				print(score)
+				print(v)
+				print(":")
+				if tonumber(score) > tonumber(v) and highscore==false then
+					print(score)
+					print(v)
 					highscore=true
 					insert=i+1
 					table.insert(csv,i,core.round(score,6))
