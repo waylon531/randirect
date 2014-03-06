@@ -56,11 +56,16 @@ function love.draw()
 				x=windowWidth+30
 				if v==4 then
 					v=text
+					if text=='' then
+						love.graphics.setColor( 255, 0, 0)
+						v="Enter name:"
+					end
 				end
 			else
 				x=windowWidth-90
 			end
 			love.graphics.print(v,x,math.ceil(i/2)*20+150)
+			love.graphics.setColor( 255, 255, 255)
 		end
 		love.graphics.setColor( 255, 200, 255)
 		love.graphics.rectangle("fill", windowWidth-70, windowHeight/2-20, 100, 40 )
@@ -195,6 +200,17 @@ function love.mousepressed(x, y, button)
 				difficulty=.1
 			end
 		end
+	end
+end
+function love.quit()
+	if level=='end' and highscore==true then
+		csv[insert]=text
+		if difficulty==.2 then
+			love.filesystem.write("highscores.csv",core.toCSV(csv))
+		else
+			love.filesystem.write("highscoresdifficult.csv",core.toCSV(csv))
+		end
+		highscore=false
 	end
 end
 function love.textinput(t)
