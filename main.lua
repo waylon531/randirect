@@ -150,7 +150,7 @@ function love.update(dt)
 		level="end"
 		text=""
 		textEnterable=true
-		print("gameover")
+		--print("gameover")
 		characterY=windowHeight-10000000
 		if difficulty==.2 then
 			contents= love.filesystem.read("highscores.csv")
@@ -161,13 +161,13 @@ function love.update(dt)
 		for i, v in ipairs(csv) do 
 			if (i % 2 == 0) then
 			else
-				print(":")
-				print(score)
-				print(v)
-				print(":")
+				--print(":")
+				--print(score)
+				--print(v)
+				--print(":")
 				if tonumber(score) > tonumber(v) and highscore==false then
-					print(score)
-					print(v)
+					--print(score)
+					--print(v)
 					highscore=true
 					insert=i+1
 					table.insert(csv,i,core.round(score,6))
@@ -175,6 +175,9 @@ function love.update(dt)
 					table.remove(csv)
 					table.remove(csv)
 					score=v
+					if csv[10]==nil then
+						csv[10]="waylon"
+					end
 				end
 			end
 		end
@@ -183,7 +186,6 @@ function love.update(dt)
 		else
 			love.filesystem.write("highscoresdifficult.csv",core.toCSV(csv))
 		end
-		
 	end
 end
 function love.mousepressed(x, y, button)
