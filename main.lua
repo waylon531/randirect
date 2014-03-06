@@ -1,5 +1,7 @@
 core=require "core"
 function love.load()
+	insert=0
+	text=""
 	love.window.setTitle("randir")
 	level="menu"
 	tile = love.graphics.newImage("img/conveyor.png")
@@ -52,12 +54,14 @@ function love.draw()
 		for i, v in ipairs(csv) do 
 			if (i % 2 == 0) then
 				x=windowWidth+30
+				if v==4 then
+					v=text
+				end
 			else
 				x=windowWidth-90
 			end
 			love.graphics.print(v,x,math.ceil(i/2)*20+150)
 		end
-		highscore=false
 		love.graphics.setColor( 255, 200, 255)
 		love.graphics.rectangle("fill", windowWidth-70, windowHeight/2-20, 100, 40 )
 		love.graphics.rectangle("fill", windowWidth-70, windowHeight/2+60, 100, 40 )
@@ -73,9 +77,16 @@ function love.draw()
 		love.graphics.print("Normal Mode",windowWidth-60,windowHeight/2-7)
 		love.graphics.print("INSANE MODE!!!",windowWidth-70,windowHeight/2+73)
 		love.graphics.setColor( 255, 255, 255)
+		--love.graphics.print("Enter Your name:",windowWidth-80, 100)
+		--love.graphics.print(text,windowWidth-80, 120)
 	end
 end
 function love.keypressed( key, isrepeat )
+	if level=="end" then
+		if key =="backspace" then
+			text=string.sub(text, 1, string.len(text)-1)
+		end
+	end
 	if whichArrow ==1 then
 		neededDirection=direction
 	else
@@ -116,7 +127,9 @@ function love.update(dt)
 	if characterY>windowHeight then
 		score,oldscore=time3,time3
 		level="end"
-		characterY=windowHeight
+		text=""
+		print("gameover")
+		characterY=windowHeight-10000000
 		if difficulty==.2 then
 			contents= love.filesystem.read("highscores.csv")
 		else
@@ -127,8 +140,10 @@ function love.update(dt)
 			if (i % 2 == 0) then
 			else
 				if tonumber(score) > tonumber(v) then
+					highscore=true
+					insert=i+1
 					table.insert(csv,i,core.round(score,6))
-					table.insert(csv,i+1,"notwaylon")
+					table.insert(csv,i+1,4)
 					table.remove(csv)
 					table.remove(csv)
 					score=v
@@ -147,6 +162,15 @@ function love.mousepressed(x, y, button)
 	if button == "l" then
 		if level ~= "game" and y>windowHeight/2-20 and y<windowHeight/2+20 then
 			if x>windowWidth-70 and x<windowWidth+30 then
+				if level =="end" and highscore==true then
+					csv[insert]=text
+					if difficulty==.2 then
+						love.filesystem.write("highscores.csv",core.toCSV(csv))
+					else
+						love.filesystem.write("highscoresdifficult.csv",core.toCSV(csv))
+					end
+					highscore=false
+				end
 				level="game"
 				characterY=windowHeight/2
 				time = love.timer.getTime()
@@ -155,6 +179,15 @@ function love.mousepressed(x, y, button)
 			end
 		elseif level ~= "game" and y>windowHeight/2+60 and y<windowHeight/2+100 then
 			if x>windowWidth-70 and x<windowWidth+30 then
+				if level =="end" and highscore==true then
+					csv[insert]=text
+					if difficulty==.2 then
+						love.filesystem.write("highscores.csv",core.toCSV(csv))
+					else
+						love.filesystem.write("highscoresdifficult.csv",core.toCSV(csv))
+					end
+					highscore=false
+				end
 				level="game"
 				characterY=windowHeight/2
 				time = love.timer.getTime()
@@ -165,7 +198,7 @@ function love.mousepressed(x, y, button)
 	end
 end
 function love.textinput(t)
-    --text = text .. t
+		text = text .. t
 end
 function updateSpritebatch(spriteBatch,translation)
 	spriteBatch:bind()
