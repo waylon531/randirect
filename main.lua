@@ -1,5 +1,10 @@
 core=require "core"
 function love.load()
+	xMod=1
+	yMod=1
+	xRes=800
+	yRes=600
+	love.window.setMode(800, 600, {resizable=true})
 	red=255
 	textEnterable=true
 	insert=0
@@ -36,7 +41,24 @@ function love.load()
 	highscore=false
 	player="waylon531"
 end
+function love.resize(w,h)
+	windowWidth=love.graphics.getWidth()/2
+	windowHeight=love.graphics.getHeight()
+	numberOfTiles=math.ceil(windowHeight/spriteY)+1
+	--love.graphics.scale(w/xRes,h/yRes)
+	print(xRes,yRes,w/xRes,h/yRes)
+	xMod=w/xRes
+	yMod=h/yRes
+	--xRes=w
+	--yRes=h
+	--print(xRes,yRes)
+end
 function love.draw()
+	love.graphics.scale(xMod,yMod)
+	if level=="game" then
+		love.graphics.print(time3,20,100)
+	end
+	love.graphics.translate(xMod*-350+350,yMod*-350+350)
 	if level=="game" then
 		love.graphics.draw(arrow,windowWidth+50,characterY+16,math.pi*direction/2,1,1,arrowX,arrowY)
 		if whichArrow==1 then
@@ -45,7 +67,6 @@ function love.draw()
 			love.graphics.draw(bigGreenArrow,windowWidth+50,characterY+16,math.pi*bigDirection/2,2,2,bigArrowX,bigArrowY)
 		end
 		--love.graphics.print(direction)
-		love.graphics.print(time3,20,100)
 		--love.graphics.print(i,20,200)
 		love.graphics.draw(spriteBatch)
 		love.graphics.draw(character,windowWidth-16,characterY)
