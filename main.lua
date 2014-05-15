@@ -1,5 +1,6 @@
 core=require "core"
 function love.load()
+  love.filesystem.setIdentity("randirect")
 	xMod=1
 	yMod=1
 	xRes=800
